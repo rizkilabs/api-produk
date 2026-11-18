@@ -85,4 +85,45 @@ router.post("/", (req, res) => {
   });
 });
 
+// PUT /products/:id -> ubah data produk
+router.put("/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ message: "ID harus berupa angka" });
+  }
+
+  const index = products.findIndex((p) => p.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ message: "Produk tidak ditemukan" });
+  }
+
+  const errors = validateProduct(req.body);
+
+  if (errors.length > 0) {
+    return res.status(400).json({
+      message: "Data produk tidak valid",
+      errors,
+    });
+  }
+
+  const { nama, harga, stok, kategori, deskripsi } = req.body;
+
+  // ID tetap, field lain diganti
+  products[index] = {
+    id,
+    nama: nama.trim(),
+    harga,
+    stok,
+    kategori: kategori.trim(),
+    deskripsi: deskripsi.trim(),
+  };
+
+  res.status(200).json({
+    message: "Produk berhasil diubah",
+    data: products[index],
+  });
+});
+
 module.exports = router;
