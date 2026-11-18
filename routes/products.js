@@ -126,4 +126,26 @@ router.put("/:id", (req, res) => {
   });
 });
 
+// DELETE /products/:id -> hapus produk
+router.delete("/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ message: "ID harus berupa angka" });
+  }
+
+  const index = products.findIndex((p) => p.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ message: "Produk tidak ditemukan" });
+  }
+
+  const [deletedProduct] = products.splice(index, 1);
+
+  res.status(200).json({
+    message: "Produk berhasil dihapus",
+    data: deletedProduct,
+  });
+});
+
 module.exports = router;
